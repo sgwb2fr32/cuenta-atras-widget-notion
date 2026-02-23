@@ -1,183 +1,209 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Countdown</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    padding: 24px;
-  }
-
-  .widget {
-    background: #d6e4d8;
-    border-radius: 16px;
-    padding: 32px 40px;
-    text-align: center;
-    width: 100%;
-    max-width: 480px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.05);
-  }
-
-  .event-name {
-    font-size: 13px;
-    font-weight: 500;
-    color: #9b9b9b;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 24px;
-  }
-
-  .countdown-grid {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    align-items: flex-start;
-  }
-
-  .unit {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: 72px;
-  }
-
-  .number {
-    font-family: 'DM Mono', monospace;
-    font-size: 48px;
-    font-weight: 300;
-    color: #1a1a1a;
-    line-height: 1;
-    letter-spacing: -0.02em;
-    transition: opacity 0.15s ease;
-  }
-
-  .label {
-    font-size: 11px;
-    font-weight: 400;
-    color: #c0c0c0;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    margin-top: 8px;
-  }
-
-  .separator {
-    font-family: 'DM Mono', monospace;
-    font-size: 40px;
-    font-weight: 300;
-    color: #d0d0d0;
-    line-height: 1;
-    padding-top: 4px;
-    user-select: none;
-  }
-
-  .target-date {
-    font-size: 12px;
-    color: #c8c8c8;
-    margin-top: 24px;
-    font-weight: 400;
-  }
-
-  .number.tick {
-    opacity: 0.4;
-  }
-
-  /* Dark mode */
-  @media (prefers-color-scheme: dark) {
-    .widget {
-      background: #191919;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.06);
-    }
-    .number { color: #f0f0f0; }
-    .event-name { color: #666; }
-    .label { color: #444; }
-    .separator { color: #333; }
-    .target-date { color: #444; }
-  }
-</style>
-</head>
-<body>
-<div class="widget">
-  <div class="event-name" id="event-name">Año Nuevo 2026</div>
-  <div class="countdown-grid">
-    <div class="unit">
-      <div class="number" id="days">--</div>
-      <div class="label">días</div>
-    </div>
-    <div class="separator">:</div>
-    <div class="unit">
-      <div class="number" id="hours">--</div>
-      <div class="label">horas</div>
-    </div>
-    <div class="separator">:</div>
-    <div class="unit">
-      <div class="number" id="minutes">--</div>
-      <div class="label">min</div>
-    </div>
-    <div class="separator">:</div>
-    <div class="unit">
-      <div class="number" id="seconds">--</div>
-      <div class="label">seg</div>
-    </div>
-  </div>
-  <div class="target-date" id="target-display"></div>
-</div>
-
-<script>
-  // ── CONFIGURACIÓN ──────────────────────────────────────────
-  const TARGET_DATE = new Date('2026-06-05T00:00:00');  // ← cambia esta fecha
-  const EVENT_NAME  = '5 de junio de 2026';             // ← cambia este nombre
-  // ──────────────────────────────────────────────────────────
-
-  document.getElementById('event-name').textContent = EVENT_NAME;
-  document.getElementById('target-display').textContent =
-    TARGET_DATE.toLocaleDateString('es-ES', { day:'numeric', month:'long', year:'numeric' });
-
-  function pad(n) { return String(n).padStart(2, '0'); }
-
-  function tick() {
-    const now  = Date.now();
-    const diff = TARGET_DATE - now;
-
-    if (diff <= 0) {
-      ['days','hours','minutes','seconds'].forEach(id => {
-        document.getElementById(id).textContent = '00';
-      });
-      return;
-    }
-
-    const days    = Math.floor(diff / 86400000);
-    const hours   = Math.floor((diff % 86400000) / 3600000);
-    const minutes = Math.floor((diff % 3600000)  / 60000);
-    const seconds = Math.floor((diff % 60000)    / 1000);
-
-    function update(id, val) {
-      const el = document.getElementById(id);
-      const str = id === 'days' ? String(days) : pad(val);
-      if (el.textContent !== str) {
-        el.classList.add('tick');
-        setTimeout(() => el.classList.remove('tick'), 150);
-        el.textContent = str;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>countdown</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
       }
-    }
 
-    update('days',    days);
-    update('hours',   hours);
-    update('minutes', minutes);
-    update('seconds', seconds);
-  }
+      body {
+        font-family: "DM Sans", sans-serif;
+        background: transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 24px;
+      }
 
-  tick();
-  setInterval(tick, 1000);
-</script>
-</body>
+      .widget {
+        background: #add4b3;
+        border-radius: 16px;
+        padding: 32px 40px;
+        text-align: center;
+        width: 100%;
+        max-width: 480px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06),
+          0 0 0 1px rgba(0, 0, 0, 0.05);
+      }
+
+      .event-name {
+        font-size: 17px;
+        font-weight: 500;
+        color: #353230;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 24px;
+      }
+
+      .countdown-grid {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        align-items: flex-start;
+      }
+
+      .unit {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: 72px;
+      }
+
+      .number {
+        font-family: "DM Mono", monospace;
+        font-size: 48px;
+        font-weight: 300;
+        color: #1a1a1a;
+        line-height: 1;
+        letter-spacing: -0.02em;
+        transition: opacity 0.15s ease;
+      }
+
+      .label {
+        font-size: 11px;
+        font-weight: 400;
+        color: #8a8680;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        margin-top: 8px;
+      }
+
+      .separator {
+        font-family: "DM Mono", monospace;
+        font-size: 40px;
+        font-weight: 300;
+        color: #8a8680;
+        line-height: 1;
+        padding-top: 4px;
+        user-select: none;
+      }
+
+      .target-date {
+        font-size: 12px;
+        color: #545250;
+        margin-top: 24px;
+        font-weight: 400;
+      }
+
+      .number.tick {
+        opacity: 1;
+      }
+
+      /* modo oscuro */
+      @media (prefers-color-scheme: dark) {
+        .widget {
+          background: #191919;
+          box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3),
+            0 0 0 1px rgba(255, 255, 255, 0.06);
+        }
+        .number {
+          color: #f0f0f0;
+        }
+        .event-name {
+          color: #666666;
+        }
+        .label {
+          color: #444;
+        }
+        .separator {
+          color: #333;
+        }
+        .target-date {
+          color: #444;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="widget">
+      <div class="event-name" id="event-name">FECHA OBJETIVO</div>
+      <div class="countdown-grid">
+        <div class="unit">
+          <div class="number" id="days">--</div>
+          <div class="label">días</div>
+        </div>
+        <div class="separator">:</div>
+        <div class="unit">
+          <div class="number" id="hours">--</div>
+          <div class="label">horas</div>
+        </div>
+        <div class="separator">:</div>
+        <div class="unit">
+          <div class="number" id="minutes">--</div>
+          <div class="label">min</div>
+        </div>
+        <div class="separator">:</div>
+        <div class="unit">
+          <div class="number" id="seconds">--</div>
+          <div class="label">seg</div>
+        </div>
+      </div>
+      <div class="target-date" id="target-display"></div>
+    </div>
+
+    <script>
+      // ── CONFIGURACIÓN ──────────────────────────────────────────
+      const TARGET_DATE = new Date("2026-06-05T00:00:00"); // ← cambia esta fecha
+      const EVENT_NAME = "-- VERANO --"; // ← cambia este nombre
+      // ──────────────────────────────────────────────────────────
+
+      document.getElementById("event-name").textContent = EVENT_NAME;
+      document.getElementById("target-display").textContent =
+        TARGET_DATE.toLocaleDateString("es-ES", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        });
+
+      function pad(n) {
+        return String(n).padStart(2, "0");
+      }
+
+      function tick() {
+        const now = Date.now();
+        const diff = TARGET_DATE - now;
+
+        if (diff <= 0) {
+          ["days", "hours", "minutes", "seconds"].forEach((id) => {
+            document.getElementById(id).textContent = "00";
+          });
+          return;
+        }
+
+        const days = Math.floor(diff / 86400000);
+        const hours = Math.floor((diff % 86400000) / 3600000);
+        const minutes = Math.floor((diff % 3600000) / 60000);
+        const seconds = Math.floor((diff % 60000) / 1000);
+
+        function update(id, val) {
+          const el = document.getElementById(id);
+          const str = id === "days" ? String(days) : pad(val);
+          if (el.textContent !== str) {
+            el.classList.add("tick");
+            setTimeout(() => el.classList.remove("tick"), 150);
+            el.textContent = str;
+          }
+        }
+
+        update("days", days);
+        update("hours", hours);
+        update("minutes", minutes);
+        update("seconds", seconds);
+      }
+
+      tick();
+      setInterval(tick, 1000);
+    </script>
+  </body>
 </html>
+
